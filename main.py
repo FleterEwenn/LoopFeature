@@ -45,20 +45,20 @@ with open("dijkstra.txt", "w") as f:
 with open("graphe.txt", "w") as f:
     f.write(str(graphe))
 
-max = 1000
+max = 3000
 dist = 0
 point = start
 passed = [start]
 
 while dist + dijkstra[point][0] < max:
     point, curr_dist = graphe[point][random.randint(0, len(graphe[point])-1)]
-    dist += current_dist
+    dist += curr_dist
     passed.append(point)
 
 dist += dijkstra[point][0]
 
-while dijkstra[point][1] != start:
-    curr_dist, point = dijkstra[point]
+while point != start:
+    point = dijkstra[point][1]
     passed.append(point)
 
 print(dist)
