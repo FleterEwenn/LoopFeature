@@ -1,5 +1,6 @@
 from overpass import get_path, calculer_dist
 import time
+import random
 
 list_path = False
 
@@ -41,3 +42,23 @@ while len(file) > 0:
 
 with open("dijkstra.txt", "w") as f:
     f.write(str(dijkstra))
+with open("graphe.txt", "w") as f:
+    f.write(str(graphe))
+
+max = 5000
+dist = 0
+point = start
+passed = [start]
+
+while dist + dijkstra[point][0] < max:
+    point, curr_dist = graphe[point][random.randint(0, len(graphe[point]-1))]
+    dist += current_dist
+    passed.append(point)
+
+while dijkstra[point][0] != start:
+    curr_dist, point = dijkstra[point]
+    dist += curr_dist
+    passed.append(point)
+
+print(dist)
+print(passed)

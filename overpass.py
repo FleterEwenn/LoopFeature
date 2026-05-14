@@ -8,7 +8,7 @@ overpass_request = """
 (
 	way["highway"](around:3000, 45.0320272, 1.8060011);
 	-
-	way["highway"~"primary|tertiary"](around:3000, 45.0320272, 1.8060011);
+	way["highway"~"primary"](around:3000, 45.0320272, 1.8060011);
 );
 out geom;"""
 
@@ -19,7 +19,7 @@ def get_path()->dict:
         return data["elements"]
     else:
         return False
-def calculer_dist(point1, point2):
+def calculer_dist(point1:tuple[int, int], point2:tuple[int, int])->float:
     midlat = (point1[0] + point2[0])/2
     dy = (point1[0] - point2[0]) * 110540
     dx = (point1[1] - point2[1]) * 111320 * math.cos(math.radians(midlat))
