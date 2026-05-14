@@ -45,7 +45,7 @@ with open("dijkstra.txt", "w") as f:
 with open("graphe.txt", "w") as f:
     f.write(str(graphe))
 
-max = 5000
+max = 1000
 dist = 0
 point = start
 passed = [start]
@@ -55,9 +55,10 @@ while dist + dijkstra[point][0] < max:
     dist += current_dist
     passed.append(point)
 
-while dijkstra[point][0] != start:
+dist += dijkstra[point][0]
+
+while dijkstra[point][1] != start:
     curr_dist, point = dijkstra[point]
-    dist += curr_dist
     passed.append(point)
 
 print(dist)
