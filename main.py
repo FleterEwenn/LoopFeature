@@ -51,7 +51,7 @@ point = start
 passed = [start]
 
 while dist + dijkstra[point][0] < max:
-    point, curr_dist = graphe[point][random.randint(0, len(graphe[point]-1))]
+    point, curr_dist = graphe[point][random.randint(0, len(graphe[point])-1)]
     dist += current_dist
     passed.append(point)
 
