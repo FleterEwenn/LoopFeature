@@ -19,7 +19,7 @@ def get_path()->dict:
         return data["elements"]
     else:
         return False
-def calculer_dist(point1:tuple[int, int], point2:tuple[int, int])->float:
+def calcul_dist(point1:tuple[int, int], point2:tuple[int, int])->float:
     midlat = (point1[0] + point2[0])/2
     dy = (point1[0] - point2[0]) * 110540
     dx = (point1[1] - point2[1]) * 111320 * math.cos(math.radians(midlat))
