@@ -15,8 +15,8 @@ def create_graphe(list_path:list[dict])->dict:
     
     return graphe
 
-def create_loop(start:tuple, shortly_distance:dict, graphe:dict)->tuple[list, int]:
-    max = 3000
+def create_loop(start:tuple, shortly_distance:dict, graphe:dict, distance_wanted:int)->tuple[list, int]:
+    max = distance_wanted
     dist = 0
     point = start
     passed = [start]

@@ -14,13 +14,12 @@ graphe = create_graphe(list_path)
 start = list(graphe.keys())[0]
 shortly_distance = dijkstra(graphe, start)
 
-
 with open("dijkstra.txt", "w") as f:
     f.write(str(shortly_distance))
 with open("graphe.txt", "w") as f:
     f.write(str(graphe))
 
-loop_path = create_loop(start, shortly_distance, graphe)
+loop_path = create_loop(start, shortly_distance, graphe, 1000)
 
 print(loop_path[1])
 
