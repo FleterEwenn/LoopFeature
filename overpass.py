@@ -1,19 +1,25 @@
 import requests
 import math
 
-url = "https://overpass.kumi.systems/api/interpreter"
+url = "https://overpass-api.de/api/interpreter"
 
 overpass_request = """
 [out:json][timeout:20];
 (
-	way["highway"](around:3000, 45.0320272, 1.8060011);
+	way["highway"](around:2000, 45.0320272, 1.8060011);
 	-
-	way["highway"~"primary"](around:3000, 45.0320272, 1.8060011);
+	way["highway"~"primary"](around:2000, 45.0320272, 1.8060011);
 );
 out geom;"""
 
 def get_path()->dict:
-    response = requests.get(url, data=overpass_request)
+    response = requests.post(url, 
+                             data=overpass_request, 
+                             headers={
+                                "Content-Type": "text/plain",
+                                "User-Agent": "LoopFeature"
+                                },
+                            timeout=60)
     if response.status_code == 200:
         data = response.json()
         return data["elements"]
