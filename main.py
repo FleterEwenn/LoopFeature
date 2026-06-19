@@ -27,8 +27,6 @@ for point in graphe:
 
 shortly_distance = dijkstra(graphe, start)
 
-with open("dijkstra.txt", "w") as f:
-    f.write(str(shortly_distance))
 with open("graphe.txt", "w") as f:
     f.write(str(graphe))
 
