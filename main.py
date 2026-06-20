@@ -3,7 +3,6 @@ from dijkstra import dijkstra
 from graphe_manage import create_graphe, create_loop
 from generate_GPX import generate_GPX
 import time
-import random
 
 list_path = False
 print("Veuillez entrez les coordonnées du point de départ")
