@@ -6,12 +6,14 @@ def generate_GPX(point_list:list[float, float]):
 <trk>
 <trkseg>"""
     
-    with rasterio.open("data/france.tif") as tiff_file:
+    with rasterio.open("loopfeature/data/france.tif") as tiff_file:
         band = tiff_file.read(1)
+        print(point_list)
         for point in point_list:
-            x, y = tiff_file.index(point[1], point[0])
+            print(point)
+            x, y = tiff_file.index(point.longitude, point.latitude)
             elevation = band[x, y]
-            text_GPX += f'<trkpt lat="{point[0]}" lon="{point[1]}"><ele>{elevation}</ele></trkpt>\n'
+            text_GPX += f'<trkpt lat="{point.latitude}" lon="{point.longitude}"><ele>{elevation}</ele></trkpt>\n'
 
     text_GPX += "</trkseg>\n</trk>\n</gpx>\n"
     
