@@ -5,6 +5,8 @@ import math
 class Point:
     latitude:float
     longitude:float
+    segment_id:int
+    elevation:float
 
     def calcul_dist(self, point2)->float:
         midlat = (self.latitude + point2.latitude)/2

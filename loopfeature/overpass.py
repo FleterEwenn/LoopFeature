@@ -26,10 +26,3 @@ def get_path(center:tuple[float, float], total_distance:float)->dict:
         return data["elements"]
     else:
         return False
-    
-def calcul_dist(point1:tuple[int, int], point2:tuple[int, int])->float:
-    midlat = (point1[0] + point2[0])/2
-    dy = (point1[0] - point2[0]) * 110540
-    dx = (point1[1] - point2[1]) * 111320 * math.cos(math.radians(midlat))
-
-    return math.sqrt(dx**2 + dy**2)

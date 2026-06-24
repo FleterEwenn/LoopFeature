@@ -40,8 +40,11 @@ class Graph:
         dist = 0
 
         while dist + self.get_shortest_path(node)[0] < dist_max:
+            print(node)
+            print(self.get_neighbors(node))
+            print(passed)
             if len(self.get_neighbors(node)) > 2:
-                list_available_node = [p for p in self.get_neighbors(node) if p[0] not in passed[-3:]] + [p for p in self.get_neighbors(node) if p[0] not in passed]
+                list_available_node = [p for p in self.get_neighbors(node) if p[0] not in passed]
             elif len(self.get_neighbors(node)) > 1:
                 list_available_node = [p for p in self.get_neighbors(node) if p[0] not in passed[-2:]] + [p for p in self.get_neighbors(node) if p[0] not in passed]
             else:

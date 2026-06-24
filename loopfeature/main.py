@@ -1,8 +1,10 @@
 from overpass import get_path
 from graph import Graph
 from point import Point
+from segment import Segment
 from generate_GPX import generate_GPX
 import time
+import rasterio
 
 list_path = False
 
@@ -22,22 +24,40 @@ while not list_path:
 start = None
 
 graphe = Graph(Point.calcul_dist)
-for path in list_path:
-    list_points = []
-    for point in path["geometry"]:
+with rasterio.open("loopfeature/data/france.tif") as tiff_file:
+    band = tiff_file.read(1)
+    for path in list_path:
+        
+        elevation_gain = 0
+        x,y = tiff_file.index(path["geometry"][0]["longitude"], path["geometry"][0]["latitude"])
+        past_elevation = band[x, y]
 
-        if (round(center[0], 3), round(center[1], 3)) == (round(point["lat"], 3), round(point["lon"], 3)) and not start:
-            start = Point(round(point["lat"], 5), round(point["lon"], 5))
+        total_dist = 0
+        past_Point = Point(path["geometry"][0]["latitude"], path["geometry"][0]["longitude"], path["id"], past_elevation)
 
-        list_points.append(Point(round(point["lat"], 5), round( point["lon"], 5)))
-    graphe.add_elements(list_points)
+        list_points = []
+        for point in path["geometry"]:
+            lat = round(point["lat"], 5)
+            lon = round(point["lon"], 5)
+            
+            x,y = tiff_file.index(lon, lat)
+            elevation = band[x, y]
 
-with open("graphe.txt", "w") as f:
-    f.write(str(graphe.graph))
+            if (round(center[0], 3), round(center[1], 3)) == (round(point["lat"], 3), round(point["lon"], 3)) and not start:
+                start = Point(lat, lon, path["id"], elevation)
+
+            list_points.append(Point(lat, lon, path["id"], elevation))
+
+            elevation_gain += (past_elevation - elevation)
+            past_elevation = elevation
+
+            total_dist += past_Point.calcul_dist(point)
+            past_Point = point
+
+            ratio = elevation_gain/(total_dist/1000)
+
+        graphe.add_elements(list_points)
 
 loop_path = graphe.create_loop(start, distance)
-print(loop_path[0])
-
-print(loop_path[1])
 
 generate_GPX(loop_path[0])
