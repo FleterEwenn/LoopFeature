@@ -29,11 +29,11 @@ with rasterio.open("loopfeature/data/france.tif") as tiff_file:
     for path in list_path:
         
         elevation_gain = 0
-        x,y = tiff_file.index(path["geometry"][0]["longitude"], path["geometry"][0]["latitude"])
+        x,y = tiff_file.index(path["geometry"][0]["lon"], path["geometry"][0]["lat"])
         past_elevation = band[x, y]
 
         total_dist = 0
-        past_Point = Point(path["geometry"][0]["latitude"], path["geometry"][0]["longitude"], path["id"], past_elevation)
+        past_Point = Point(path["geometry"][0]["lat"], path["geometry"][0]["lon"], path["id"], past_elevation)
 
         list_points = []
         for point in path["geometry"]:
@@ -43,18 +43,32 @@ with rasterio.open("loopfeature/data/france.tif") as tiff_file:
             x,y = tiff_file.index(lon, lat)
             elevation = band[x, y]
 
-            if (round(center[0], 3), round(center[1], 3)) == (round(point["lat"], 3), round(point["lon"], 3)) and not start:
-                start = Point(lat, lon, path["id"], elevation)
+            current_point = Point(lat, lon, path["id"], elevation)
 
-            list_points.append(Point(lat, lon, path["id"], elevation))
+            if (round(center[0], 3), round(center[1], 3)) == (round(point["lat"], 3), round(point["lon"], 3)) and not start:
+                start = current_point
+
+            list_points.append(current_point)
 
             elevation_gain += (past_elevation - elevation)
             past_elevation = elevation
 
-            total_dist += past_Point.calcul_dist(point)
-            past_Point = point
+            total_dist += past_Point.calcul_dist(current_point)
+            past_Point = current_point
 
             ratio = elevation_gain/(total_dist/1000)
+
+            print(path["id"])
+            score = len(path["geometry"])
+            if path.get("surface", None) == "aslphat":
+                score -= 50
+            if path.get("highway", None) == "tertiary":
+                score -= 50
+            if path.get("surface", None) == "dirt":
+                score += 50
+            
+            score += (30*(abs(30-ratio)))/((abs(30-ratio))**2)
+            print(score)
 
         graphe.add_elements(list_points)
 
