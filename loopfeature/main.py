@@ -24,52 +24,60 @@ while not list_path:
 start = None
 
 graphe = Graph(Point.calcul_dist)
+
 with rasterio.open("loopfeature/data/france.tif") as tiff_file:
     band = tiff_file.read(1)
+
     for path in list_path:
         
         elevation_gain = 0
+
         x,y = tiff_file.index(path["geometry"][0]["lon"], path["geometry"][0]["lat"])
-        past_elevation = band[x, y]
+        elevation = band[x, y]
 
         total_dist = 0
-        past_Point = Point(path["geometry"][0]["lat"], path["geometry"][0]["lon"], path["id"], past_elevation)
 
-        list_points = []
-        for point in path["geometry"]:
-            lat = round(point["lat"], 5)
-            lon = round(point["lon"], 5)
+        list_points = [Point(path["geometry"][0]["lat"], path["geometry"][0]["lon"], path["nodes"][0], elevation)]
+
+        for i in range(1, len(path["geometry"])):
+
+            lat = round(path["geometry"][i]["lat"], 5)
+            lon = round(path["geometry"][i]["lon"], 5)
             
             x,y = tiff_file.index(lon, lat)
             elevation = band[x, y]
 
-            current_point = Point(lat, lon, path["id"], elevation)
+            current_point = Point(lat, lon, path["nodes"][i], elevation)
 
-            if (round(center[0], 3), round(center[1], 3)) == (round(point["lat"], 3), round(point["lon"], 3)) and not start:
+            if (round(center[0], 3), round(center[1], 3)) == (round(path["geometry"][i]["lat"], 3), round(path["geometry"][i]["lon"], 3)) and not start:
                 start = current_point
 
             list_points.append(current_point)
 
-            elevation_gain += (past_elevation - elevation)
-            past_elevation = elevation
+            elevation_gain += (list_points[i-1].elevation - elevation)
 
-            total_dist += past_Point.calcul_dist(current_point)
-            past_Point = current_point
+            total_dist += list_points[i-1].calcul_dist(current_point)
 
-            ratio = elevation_gain/(total_dist/1000)
+        ratio = elevation_gain/(total_dist/1000)
 
-            print(path["id"])
-            score = len(path["geometry"])
-            if path.get("surface", None) == "aslphat":
-                score -= 50
-            if path.get("highway", None) == "tertiary":
-                score -= 50
-            if path.get("surface", None) == "dirt":
-                score += 50
+        path_params = path["tags"]
+
+        score = len(path["geometry"])
+        if path_params.get("surface", None) == "aslphat":
+            score -= 25
+        if path_params.get("highway", None) == "tertiary":
+            score -= 30
+        if path_params.get("surface", None) == "dirt":
+            score += 25
+        if path_params.get("highway", None) == "path":
+            score += 30
+        if path_params.get("highway", None) == "footway":
+            score += 25
+        if path_params.get("highway", None) == "service":
+            score -25
             
-            score += (30*(abs(30-ratio)))/((abs(30-ratio))**2)
-            print(score)
-
+        score += 100/(abs(30-ratio)+1)
+        
         graphe.add_elements(list_points)
 
 loop_path = graphe.create_loop(start, distance)

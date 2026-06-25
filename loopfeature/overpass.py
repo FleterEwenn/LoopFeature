@@ -1,5 +1,4 @@
 import requests
-import math
 
 url = "https://overpass-api.de/api/interpreter"
 
@@ -10,7 +9,7 @@ def get_path(center:tuple[float, float], total_distance:float)->dict:
     (
         way["highway"](around:{radius}, {center[0]}, {center[1]});
         -
-        way["highway"~"primary|service"](around:{radius}, {center[0]}, {center[1]});
+        way["highway"~"primary"](around:{radius}, {center[0]}, {center[1]});
     );
     out geom;"""
 

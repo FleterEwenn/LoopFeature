@@ -5,7 +5,7 @@ import math
 class Point:
     latitude:float
     longitude:float
-    segment_id:int
+    id:int
     elevation:float
 
     def calcul_dist(self, point2)->float:

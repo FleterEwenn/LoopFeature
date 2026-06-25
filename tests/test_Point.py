@@ -4,7 +4,7 @@ def test_access_attribute_class_Point():
     point1 = Point(10, 20, 123456789, 230)
     assert point1.latitude == 10
     assert point1.longitude == 20
-    assert point1.segment_id == 123456789
+    assert point1.id == 123456789
     assert point1.elevation == 230
 
 def test_hashable_class_Point():
