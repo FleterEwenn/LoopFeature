@@ -1,5 +1,3 @@
-import random
-
 class Graph:
     def __init__(self, weight_function):
         self.graph = {}        

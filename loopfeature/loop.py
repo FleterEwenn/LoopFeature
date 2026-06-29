@@ -1,4 +1,8 @@
-def create_loop(graph, start, dist_max:float, dict_segment:dict)->tuple[list, float]:
+from graph import Graph
+from point import Point
+from segment import Segment
+
+def create_loop(graph:Graph, start:Point, dist_max:float, dict_segment:dict[int, list[Segment]])->tuple[list[Point], float]:
         graph.construct_dijkstra(start)
         
         node = start
@@ -7,7 +11,7 @@ def create_loop(graph, start, dist_max:float, dict_segment:dict)->tuple[list, fl
         passed_edge = set()
 
         while total_dist + graph.get_shortest_path(node)[0] < dist_max:
-            neighbors = graph.get_neighbors(node)
+            neighbors : list[tuple[Point, float, Segment]] = graph.get_neighbors(node)
             best_score = float("-inf")
             best_node = None
             best_dist = 0
@@ -20,9 +24,9 @@ def create_loop(graph, start, dist_max:float, dict_segment:dict)->tuple[list, fl
                 best_new_segment_score = float("-inf")
                 for new_segment in dict_segment[neighbor.id]:
                     if new_segment.id != segment.id:
-                        current_segment_score = segment.score 
-                        current_segment_score += 100/(abs(30-max([segment.elev_gain_FtoL, segment.elev_gain_LtoF]))+1)
-                        current_segment_score += (len(graph.get_neighbors(new_segment.first_point)) + len(graph.get_neighbors(new_segment.last_point)) - 2)*4
+                        current_segment_score = new_segment.score 
+                        current_segment_score += 1000/(abs(30-max([new_segment.elev_gain_FtoL, new_segment.elev_gain_LtoF])/(new_segment.distance/1000))+1)**1.2
+                        current_segment_score += len(graph.get_neighbors(new_segment.first_point)) + len(graph.get_neighbors(new_segment.last_point)) - 2
                         if current_segment_score > best_new_segment_score:
                             best_new_segment_score = current_segment_score
 
@@ -34,7 +38,11 @@ def create_loop(graph, start, dist_max:float, dict_segment:dict)->tuple[list, fl
 
                 score = segment.score*5
 
-                score += delta*5
+                if not len(graph.get_neighbors(segment.last_point)) > 1 or not len(graph.get_neighbors(segment.first_point)) > 1:
+                    score -= 200
+
+                if neighbor not in passed:
+                    score += delta*5
 
                 if edge in passed_edge:
                     score -= 1000
@@ -51,7 +59,7 @@ def create_loop(graph, start, dist_max:float, dict_segment:dict)->tuple[list, fl
                     elevation_gain = diff
                 else:
                     elevation_gain = 0
-                score += 100/(abs(30-elevation_gain)+1)
+                score += 500/(abs(30-elevation_gain/(segment.distance/1000))+1)
 
                 if best_new_segment_score > float("-inf"):
                     score += best_new_segment_score*4
