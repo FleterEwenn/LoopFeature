@@ -90,6 +90,8 @@ with rasterio.open("loopfeature/data/france.tif") as tiff_file:
             score += 100
         if path_params.get("highway") == "service":
             score -= 300
+        if "Impasse" in path_params.get("name", ""):
+            score -= 300
 
         current_segment.score = score
         

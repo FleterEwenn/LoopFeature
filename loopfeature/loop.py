@@ -25,7 +25,7 @@ def create_loop(graph:Graph, start:Point, dist_max:float, dict_segment:dict[int,
                 for new_segment in dict_segment[neighbor.id]:
                     if new_segment.id != segment.id:
                         current_segment_score = new_segment.score 
-                        current_segment_score += 1000/(abs(30-max([new_segment.elev_gain_FtoL, new_segment.elev_gain_LtoF])/(new_segment.distance/1000))+1)**1.2
+                        current_segment_score += 1000/(abs(26.5-max([new_segment.elev_gain_FtoL, new_segment.elev_gain_LtoF])/(new_segment.distance/1000))+1)**1.2
                         current_segment_score += len(graph.get_neighbors(new_segment.first_point)) + len(graph.get_neighbors(new_segment.last_point)) - 2
                         if current_segment_score > best_new_segment_score:
                             best_new_segment_score = current_segment_score
@@ -45,9 +45,10 @@ def create_loop(graph:Graph, start:Point, dist_max:float, dict_segment:dict[int,
                     score += delta*5
 
                 if edge in passed_edge:
+                    score -= passed.index(neighbor)*2
                     score -= 1000
                 else:
-                    score += 500
+                    score += 600
 
                 diff = neighbor.elevation - node.elevation
                 if neighbor in passed:
@@ -59,7 +60,7 @@ def create_loop(graph:Graph, start:Point, dist_max:float, dict_segment:dict[int,
                     elevation_gain = diff
                 else:
                     elevation_gain = 0
-                score += 500/(abs(30-elevation_gain/(segment.distance/1000))+1)
+                score += 700/(abs(26.5-elevation_gain/(segment.distance/1000))+1)**1.2
 
                 if best_new_segment_score > float("-inf"):
                     score += best_new_segment_score*4

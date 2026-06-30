@@ -3,7 +3,7 @@ import requests
 url = "https://overpass-api.de/api/interpreter"
 
 def get_path(center:tuple[float, float], total_distance:float)->dict:
-    radius = int(0.25*total_distance)
+    radius = int(0.3*total_distance)
     overpass_request = f"""
     [out:json][timeout:20];
     (
