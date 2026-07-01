@@ -6,7 +6,7 @@ def get_tile(center:tuple[float, float])->str:
     lat = int((center[0]//10)*10)
     lon = int((center[1]//10)*10)
     filename = f"10_DEM_y{lat}x{lon}.tif"
-    if os.path.exists("loopfeature/data" + filename):
+    if os.path.exists("loopfeature/data/" + filename):
         return filename 
     else:
         download_tile(lat, lon, filename)

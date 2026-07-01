@@ -20,13 +20,21 @@ def create_loop(graph:Graph, start:Point, dist_max:float, dict_segment:dict[int,
             ditance_node_to_start = node.calcul_dist(start)
 
             for neighbor, curr_dist, segment in neighbors:
-
+                real_cul_de_sac = segment.is_service and(len(graph.get_neighbors(segment.last_point)) <= 1 or len(graph.get_neighbors(segment.first_point)) <= 1)
+                if real_cul_de_sac:
+                    continue
+                
                 best_new_segment_score = float("-inf")
                 for new_segment in dict_segment[neighbor.id]:
                     if new_segment.id != segment.id:
+                        real_cul_de_sac = new_segment.is_service and (len(graph.get_neighbors(new_segment.last_point)) <= 1 or len(graph.get_neighbors(new_segment.first_point)) <= 1)
+                        if real_cul_de_sac:
+                            continue
+
                         current_segment_score = new_segment.score 
                         current_segment_score += 1000/(abs(26.5-max([new_segment.elev_gain_FtoL, new_segment.elev_gain_LtoF])/(new_segment.distance/1000))+1)**1.2
                         current_segment_score += len(graph.get_neighbors(new_segment.first_point)) + len(graph.get_neighbors(new_segment.last_point)) - 2
+                        
                         if current_segment_score > best_new_segment_score:
                             best_new_segment_score = current_segment_score
 

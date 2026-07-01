@@ -44,7 +44,7 @@ with rasterio.open(f"loopfeature/data/{filename}") as tiff_file:
         first_point = Point(round(path["geometry"][0]["lat"], 5), round(path["geometry"][0]["lon"], 5), path["nodes"][0], elevation)
         list_points = [first_point]
 
-        current_segment = Segment(0, path["id"], first_point, None, 0, 0, 0)
+        current_segment = Segment(0, path["id"], first_point, None, 0, 0, 0, False)
 
         for i in range(1, len(path["geometry"])):
 
@@ -92,9 +92,8 @@ with rasterio.open(f"loopfeature/data/{filename}") as tiff_file:
         if path_params.get("highway") == "footway":
             score += 100
         if path_params.get("highway") == "service":
-            score -= 300
-        if "Impasse" in path_params.get("name", ""):
-            score -= 300
+            score -= 100
+            current_segment.is_service = True
 
         current_segment.score = score
         
